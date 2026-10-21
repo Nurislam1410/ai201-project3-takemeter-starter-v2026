@@ -115,19 +115,19 @@ I am making use of a public gym or fitness subreddit, for example, r/Fitness, r/
 <!-- Where you collected from, how you labelled, your counts, and three hard
      cases. -->
 
-**Where the posts came from:**
+**Where the posts came from:** A public gym/fitness subreddit community (r/Fitness, r/gym, r/bodybuilding-type sources) — comments/replies specifically, not just original post bodies, since that's where most of the real opinion/argument/reaction content lives in this community.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+**How I labelled them:** 20 posts labelled cold first — no AI, no help, just my own definitions, as the honesty check. The remaining ~197 were pre-labelled by AI using simple keyword rules against my own label definitions, then I read through and corrected them myself before finalizing.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| reaction | 143 | 66% |
+| advice_analysis | 40 | 18% |
+| progress_log | 22 | 10% |
+| hot_take | 12 | 6% |
+| **Total** | 217 | 100% |
 
 **Three hard cases**
 
@@ -135,25 +135,25 @@ Say so plainly — the disclosure is required, not penalised. -->
      been, and what you chose. These are worth more than the easy 190. -->
 
 **1.**
-> *The post:*
+> *The post:* "It's by far women 30+ who interrupt the most, followed by unfit women in their 20s, and men in their 60s+."
 >
-> *Could have been:*
+> *Could have been:* `reaction` (a bare observation/complaint)
 >
-> *I chose, because:*
+> *I chose `hot_take`, because:* Wasn't sure — went with my gut, since it reads as a confident generalization with no real support behind it.
 
 **2.**
-> *The post:*
+> *The post:* "However you want to define it. There's no universal standard"
 >
-> *Could have been:*
+> *Could have been:* `reaction` (a short, low-content reply)
 >
-> *I chose, because:*
+> *I chose `hot_take`, because:* Wasn't sure — went with my gut.
 
 **3.**
-> *The post:*
+> *The post:* "Pennies have been useless for decades. The Simpsons even has a joke back in the 90s about government keeping them in circulation..."
 >
-> *Could have been:*
+> *Could have been:* `reaction` (riffing on a running joke in the thread, not really arguing a point)
 >
-> *I chose, because:*
+> *I chose `hot_take`, because:* Wasn't sure — went with my gut.
 
 ---
 
@@ -161,17 +161,15 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Base model:** distilbert-base-uncased (project default, not changed).
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Settings:** 3 epochs, learning rate 2e-5, batch size 16, max length 128, seed 42 (all defaults, not changed).
 
-**Anything I changed from the defaults, and why:**
+**Training did not complete — environment failure, not a data or code problem.** `torch` failed to import: its core compiled file (`_C.cpython-313-darwin.so`) was only 67KB instead of the expected tens of megabytes. Diagnosed cause: this project folder lives under iCloud Desktop sync, which appears to have offloaded/corrupted the large installed binary files to save local storage. `pip install -r requirements.txt` reported everything as "already satisfied" (confirming a prior install existed), but even a bare `import torch` hung indefinitely (tested past 100 seconds) rather than erroring, consistent with a truncated/placeholder file. Fixing this properly requires moving the project outside of iCloud sync and reinstalling ~1.6GB of dependencies fresh, which was not possible in the time remaining before submission.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+**What's real and complete regardless:** the label taxonomy, the decision rule, the 217-row labeled dataset (`labels.csv`), and all 5 acceptance criteria were finished and committed before this was discovered. Per the assignment's own stuck-rule, this is an accepted outcome: "You have a labeled dataset and a filed standard, which is most of this unit's grade."
 
-
+**Split sizes:** not computed — the notebook never reached Section 3 due to the import failure above.
 
 ---
 
@@ -186,17 +184,17 @@ of next unit's variance. -->
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Stress-test my label boundaries once I'd picked `progress_log` / `advice_analysis` / `hot_take` / `reaction`, and find a real ambiguous case from my own collected comments.
+- *What came back:* A boundary case between `reaction` and `advice_analysis` (a comment joking about pizza before a workout) and a proposed decision rule: if the post names a specific mechanism or number as the reason, it's `advice_analysis`, even if the tone is casual.
+- *What I changed:* Nothing — I confirmed this matched what I was seeing in my own reading and kept it as the decision rule.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Critique on my 5 acceptance criteria numbers (overall accuracy, hot_take F1, balance, consistency, confidence) for being too easy or too hard, without being told different numbers.
+- *What came back:* A flag that two of my numbers didn't match my own stated reasoning (reasoning argued the task was harder, but the number didn't reflect that), and a factual catch that one target (no label exceeds 50%) was already false against my own collected data (reaction was at 67%).
+- *What I changed:* Lowered the mismatched numbers to 0.7, and corrected the balance target to 75% to match reality.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** I collected 217 real comments (manually copy-pasted from gym/fitness subreddits, plus some extracted from screenshots I'd taken). I had the AI pre-label all of them against my 4 definitions using simple keyword-based rules, with 20 rows deliberately left blank in the note column for me to label completely on my own, without help, as the cold/honesty check. I read through and corrected the AI's pre-labels myself before finalizing `labels.csv`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
