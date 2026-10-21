@@ -53,60 +53,41 @@ whether you hit them:
 
 ## 1.
 
-<!-- Your criterion. It must name a number. -->
+Overall accuracy is at least 0.70 on the held-out set.
 
-
-
-**Why this target:**
-
-
+**Why this target:** Lowering this from an initial 0.8 — my own reasoning is that replies aren't strictly one category, some could reasonably fit more than one of my labels, which makes the task harder than a clean single-label problem. 0.70 still clearly beats the 0.67 a model would get by just always guessing `reaction` (my most common label), but I'd rather set something I can actually defend than something that sounds impressive.
 
 ---
 
 ## 2.
 
-<!-- Your criterion. -->
+F1 for `hot_take` is at least 0.70 on the held-out set.
 
-
-
-**Why this target:**
-
-
+**Why this target:** Same reasoning as #1 — hot_takes are also genuinely harder to recognize than the other labels, and this is my thinnest label (only 10 examples total, meaning roughly 1-2 in the test split). A small number of test examples makes F1 swing a lot on a single wrong guess, so I kept this target modest rather than matching overall accuracy.
 
 ---
 
 ## 3.
 
-<!-- Your criterion. -->
+No label exceeds 75% of the dataset.
 
-
-
-**Why this target:**
-
-
+**Why this target:** My real, already-collected data has `reaction` at about 67% of 217 rows. Setting the cap at 75% matches reality without pretending I can rebalance further in the time I have, while still guarding against one label dominating so much that the model just learns to guess it and ignores the rest.
 
 ---
 
 ## 4.
 
-<!-- Your criterion. -->
+If I relabeled a sample of these comments myself a second time, I'd agree with my first pass at least 90% of the time.
 
-
-
-**Why this target:**
-
-
+**Why this target:** Gym/fitness community replies are genuinely easier to categorize into my chosen labels than a lot of domains would be — the distinctions (reporting a result vs. making a backed claim vs. a bare reaction) are usually pretty visible in the text itself, so I expect to be fairly consistent with myself.
 
 ---
 
 ## 5.
 
-<!-- Your criterion. -->
+When the model's confidence is above 0.7, it is correct at least 90% of the time.
 
-
-
-**Why this target:**
-
+**Why this target:** Keeping this as written, but flagging a real limitation: my data is heavily skewed (67% reaction, only 5% hot_take), and models trained on skewed data tend to only reach high confidence on the majority label. So this criterion may end up telling me little to nothing about `hot_take` specifically, since the model may rarely be confident enough on it to even be evaluated by this rule.
 
 
 ---
