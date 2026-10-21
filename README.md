@@ -165,11 +165,27 @@ I am making use of a public gym or fitness subreddit, for example, r/Fitness, r/
 
 **Settings:** 3 epochs, learning rate 2e-5, batch size 16, max length 128, seed 42 (all defaults, not changed).
 
-**Training did not complete — environment failure, not a data or code problem.** `torch` failed to import: its core compiled file (`_C.cpython-313-darwin.so`) was only 67KB instead of the expected tens of megabytes. Diagnosed cause: this project folder lives under iCloud Desktop sync, which appears to have offloaded/corrupted the large installed binary files to save local storage. `pip install -r requirements.txt` reported everything as "already satisfied" (confirming a prior install existed), but even a bare `import torch` hung indefinitely (tested past 100 seconds) rather than erroring, consistent with a truncated/placeholder file. Fixing this properly requires moving the project outside of iCloud sync and reinstalling ~1.6GB of dependencies fresh, which was not possible in the time remaining before submission.
+**Environment note:** training initially failed in the local project venv — iCloud Desktop sync had corrupted installed package files (confirmed: `numpy/__init__.py` was missing entirely, then a different file inside `torch` was missing on the next attempt). Fixed by building a fresh virtual environment outside of iCloud-synced storage and reinstalling dependencies there. Training then ran cleanly.
 
-**What's real and complete regardless:** the label taxonomy, the decision rule, the 217-row labeled dataset (`labels.csv`), and all 5 acceptance criteria were finished and committed before this was discovered. Per the assignment's own stuck-rule, this is an accepted outcome: "You have a labeled dataset and a filed standard, which is most of this unit's grade."
+**Split sizes:** 151 train / 33 val / 33 test (stratified 70/15/15 on 217 rows). `hot_take` has only 2 test examples and `progress_log` 3 — both flagged by the notebook's own split checker as too thin for a stable F1.
 
-**Split sizes:** not computed — the notebook never reached Section 3 due to the import failure above.
+**Results (seed 42):**
+
+| Metric | Value |
+|---|---|
+| Overall accuracy | 0.667 |
+| Macro F1 | 0.200 |
+
+| Label | F1 | Support |
+|---|---|---|
+| `reaction` | 0.800 | 22 |
+| `advice_analysis` | 0.000 | 6 |
+| `progress_log` | 0.000 | 3 |
+| `hot_take` | 0.000 | 2 |
+
+Confidence: accuracy on the most-confident third of predictions was 0.727, versus 0.636 on the least-confident third.
+
+**What actually happened:** the confusion matrix shows the model predicted `reaction` for every single test example, including all the `advice_analysis`, `progress_log`, and `hot_take` ones. It collapsed to the majority class — the 0.667 accuracy is exactly what you'd get by always guessing `reaction`, since that's 66% of the data. This matches what criteria.md #5 already flagged as a risk before training: a model trained on this imbalance would rarely get confident enough on the minority labels to be evaluated on them at all, and here it didn't learn to distinguish them from `reaction` whatsoever.
 
 ---
 
