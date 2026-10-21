@@ -59,33 +59,52 @@ I am making use of a public gym or fitness subreddit, for example, r/Fitness, r/
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+### `progress_log`
 
-**Definition:**
-
-**Example 1:**
->
-
-**Example 2:**
->
-
-### `label_two`
-
-**Definition:**
+**Definition:** Reports a specific tracked result without arguing a point.
 
 **Example 1:**
->
+> I went to the gym for all five days this week. I've been struggling hard with consistency, but I did it.
 
 **Example 2:**
->
+> Complete beginner here in my 2nd month. Somehow, I killed my calves and it left me with DOMS for 4 days straight. Couldn't really walk for 2 of those days. Finally came back to the gym after a week of rest and set crazy PRs. Increased my bench from 7 to 12 reps.
+
+### `advice_analysis`
+
+**Definition:** Makes a claim backed by something checkable — a mechanism, a number, a specific method.
+
+**Example 1:**
+> The most important thing for muscle building is the # of hard reps performed over time. Doing a million bicep curls with no resistance won't build any muscle as 0 of them were what is called an effective rep in the literature.
+
+**Example 2:**
+> Stack your joints, regardless of limb length. Then make small adjustments from there for pressing movements.
+
+### `hot_take`
+
+**Definition:** A confident claim about training/diet with no support offered.
+
+**Example 1:**
+> You should commit in one direction with body weight loss/gain. Muscle loss during a cut is overblown, you just have less muscle mass than you think.
+
+**Example 2:**
+> Still no excuse to skip leg day
+
+### `reaction`
+
+**Definition:** A bare reaction or observation, no argument being made at all.
+
+**Example 1:**
+> hell yeah
+
+**Example 2:**
+> I picked things up and placed them down.
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `reaction` vs. `advice_analysis`
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+"I joke that pizza is my superpower. On the rare occasion that I smash a pizza, the workout afterwards is always FULL of PRs..." could read as a bare reaction (just bragging) or as advice_analysis (it does name a mechanism — extra calories/energy). Rule: if the post names a specific mechanism or number as the reason behind what happened, it's `advice_analysis`, even if the tone is casual or joking.
 
 
 
