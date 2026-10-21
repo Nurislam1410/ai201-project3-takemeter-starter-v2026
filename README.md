@@ -42,7 +42,12 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
+I am making use of a public gym or fitness subreddit, for example, r/Fitness, r/gym, or those similar to bodybuilding communities. The material I am relying on comes from my previous experience with them rather than from my current involvement; although I used to check these communities regularly, I am not currently taking part in them.
 
+<!-- TODO once Milestone 2 labels are locked: one sentence on what the classifier sorts comments into. Candidate distinctions noticed so far, to confirm against real comments:
+1. A few of the comments mention a particular tracked number or result (such as the weight lifted, the number of repetitions, the measurements, or the time taken); the rest do not.
+2. A few of the comments present a confident assertion supported by something verifiable such as a study, a statistic, or a particular example, while others simply state an opinion without any supporting evidence.
+3. A few of the comments are merely spontaneous reactions or expressions of pride at the time, with no argument actually being presented. -->
 
 ---
 
