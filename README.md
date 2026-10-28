@@ -250,29 +250,32 @@ Confidence: accuracy on the most-confident third of predictions was 0.727, versu
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 | 0.667 | 0.667 | 0.667 | **MISS** (all three seeds under target, and identical) |
+| 2. `hot_take` F1 | ≥ 0.70 | 0.000 | 0.000 | 0.000 | **MISS** |
+| 3. No label > 75% of dataset | ≤ 75% | 66% | 66% | 66% | **PASS** (dataset-level, doesn't change across seeds) |
+| 4. Self-relabel consistency | ≥ 90% | — | — | — | **NOT MEASURED YET** (needs a manual second-pass relabel, not a model run) |
+| 5. Correct ≥ 90% when confidence > 0.7 | ≥ 90% | — | — | — | **NOT MEASURABLE** — no prediction in any seed reached 0.7 confidence (mean confidence when right ranged 0.551–0.592, when wrong 0.568–0.597; both are below the 0.7 gate, so the criterion has zero qualifying examples to check) |
 
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
-|---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+Identical across all three seeds (seed 42 shown; seeds 7 and 2024 produced the exact same matrix):
+
+| true \ predicted | `progress_log` | `advice_analysis` | `hot_take` | `reaction` |
+|---|---|---|---|---|
+| **`progress_log`** | 0 | 0 | 0 | 3 |
+| **`advice_analysis`** | 0 | 0 | 0 | 6 |
+| **`hot_take`** | 0 | 0 | 0 | 2 |
+| **`reaction`** | 0 | 0 | 0 | 22 |
 
 **My biggest off-diagonal number, and what it means:**
 <!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
      direction. "7 real analysis posts were called hot_take and only 3 went the
      other way" is a direction, not just an error rate. -->
 
-
+The biggest single off-diagonal cell is `advice_analysis` → `reaction`: 6 out of 6 `advice_analysis` test posts were called `reaction`. But the real pattern isn't one boundary — it's every boundary at once, in one direction: all 11 non-`reaction` test posts (3 `progress_log`, 6 `advice_analysis`, 2 `hot_take`) were predicted `reaction`, and zero `reaction` posts were ever predicted as anything else. The model didn't fail to learn a specific pair like `reaction` vs. `advice_analysis` — it never learned any of the three minority labels at all. It just learned "say `reaction`," which is the loss-minimizing shortcut on a training set that's 66% `reaction`.
 
 ---
 
