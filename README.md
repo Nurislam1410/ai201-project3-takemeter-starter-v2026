@@ -286,11 +286,11 @@ The biggest single off-diagonal cell is `advice_analysis` → `reaction`: 6 out 
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.70 | **MISS** | 0.667 on all three seeds, identical every time — not close to the line, not a fluke of one seed |
+| 2 | `hot_take` F1 | ≥ 0.70 | **MISS** | 0.000 on all three seeds — the model never once predicted `hot_take`, let alone correctly |
+| 3 | No label > 75% of dataset | ≤ 75% | **PASS** | `reaction` sits at 66% of the 217 collected rows — a dataset-level fact, so it doesn't vary by seed |
+| 4 | Self-relabel consistency | ≥ 90% | **NOT MEASURED** | this requires me to manually relabel a sample a second time, which I haven't done yet given the time I had this unit |
+| 5 | Correct ≥ 90% when confidence > 0.7 | ≥ 90% | **NOT MEASURABLE AS-IS** | across all three seeds, no single prediction reached 0.7 confidence (mean confidence when right/wrong both sat in the 0.55–0.60 range) — there's no example that qualifies for this criterion to even apply to |
 
 **Diagnoses**
 
@@ -303,7 +303,9 @@ The biggest single off-diagonal cell is `advice_analysis` → `reaction`: 6 out 
      have that can tell a LABELLING problem from a MODEL problem, and this
      section is graded on whether you used it that way. -->
 
+**Important caveat on this diagnosis:** my agreement report is blocked (see the Agreement Report section below — `data/staff_labels.csv` never arrived), so I can't use it here to separate a labelling problem from a model problem the way this section asks. Everything below is reasoned from the confusion matrix alone, which can only point at the model side. If the staff labels show up later, this diagnosis should be redone properly with that evidence.
 
+From the confusion matrix: every one of the 11 non-`reaction` test posts (`progress_log`, `advice_analysis`, `hot_take` combined) was predicted `reaction`, and no `reaction` post was ever misclassified. That's the single cause behind misses #1 and #2 — it isn't a hard boundary between two specific labels (like `reaction` vs. `advice_analysis`), it's a flat majority-class collapse: `reaction` is 66% of the training data, so always guessing it is the loss-minimizing shortcut, and the model took it. `hot_take` additionally has only 12 total examples (2 in the test split) — too few for the model to learn a pattern for it even if the imbalance weren't there. Both causes point the same direction: this looks like a data problem (imbalance + a genuinely thin minority label), not a boundary-definition problem — but I can't confirm that against the agreement report until it's unblocked.
 
 ---
 
@@ -314,6 +316,8 @@ The biggest single off-diagonal cell is `advice_analysis` → `reaction`: 6 out 
      Remember you labelled these 30 under the STAFF taxonomy in
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
+
+**BLOCKED:** `data/staff_labels.csv` (the staff answer key) never arrived in this repo, so `agreement.py` has nothing to compare against and can't run. My own 30/30 labels under the staff taxonomy are saved in `my_staff_labels.csv`, ready to go the moment the staff file shows up — I'm not filling in the agreement rate or disagreements below with fabricated numbers in the meantime.
 
 **Agreement rate:** ___ / 30 = ___%
 
