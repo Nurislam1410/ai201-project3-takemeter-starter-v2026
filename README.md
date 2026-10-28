@@ -226,19 +226,19 @@ Confidence: accuracy on the most-confident third of predictions was 0.727, versu
 
 | Measure | Baseline | Trained | Difference |
 |---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
+| Overall accuracy | 0.182 | 0.667 | +0.485 |
+| Macro F1 | 0.077 | 0.200 | +0.123 |
+| F1 — `advice_analysis` | 0.308 | 0.000 | −0.308 |
+| F1 — `hot_take` | 0.000 | 0.000 | 0.000 |
+| F1 — `progress_log` | 0.000 | 0.000 | 0.000 |
+| F1 — `reaction` | 0.000 | 0.800 | +0.800 |
 
 **What I predicted before I looked:**
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
      prediction made afterwards isn't one. -->
+*(Skipped — I already saw both result files by the time I filled this table in, so anything written here now wouldn't actually be a prediction. Flagging the gap honestly rather than backfilling a fake one.)*
 
-**What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
-
+**What the gap actually means:** Looking at `baseline_results.json`'s raw predictions, the zero-shot baseline predicted `advice_analysis` for **every single one of the 33 test posts** — its own kind of majority-class collapse, just to a different label than the trained model picked. The trained model collapsed to `reaction` (66% of training data) instead. So fine-tuning did measurably move the numbers — accuracy and macro F1 both went up — but neither model actually learned to tell the four categories apart. They each just settled on one label to always say, for different underlying reasons: the baseline's zero-shot entailment prompt apparently treats `advice_analysis` as the closest match to most text regardless of content, while the trained model took the standard loss-minimizing shortcut on an imbalanced training set.
 
 
 ---
