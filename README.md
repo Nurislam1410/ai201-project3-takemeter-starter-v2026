@@ -367,26 +367,21 @@ From the confusion matrix: every one of the 11 non-`reaction` test posts (`progr
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** Added oversampling of the three minority labels (`progress_log`, `advice_analysis`, `hot_take`) within the training split only — duplicating existing rows with replacement up to parity with `reaction`'s count. Validation and test splits were never touched, so evaluation is still on the real, untouched, imbalanced distribution.
 
-**Which diagnosis pointed at it:**
+**Which diagnosis pointed at it:** The diagnosis above — a flat majority-class collapse caused by training-set imbalance (66% `reaction`) — points directly at rebalancing what the model actually trains on as the first thing to try.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.70 | 0.333 | 0.424 | 0.485 | **MISS** — and worse than before (0.667 on all three seeds pre-fix) |
+| 2. `hot_take` F1 | ≥ 0.70 | 0.000 | 0.000 | 0.000 | **MISS** — exactly unchanged, 0.000 in every seed both before and after |
+| 3. No label > 75% of dataset | ≤ 75% | 66% | 66% | 66% | **PASS** — unaffected; only the training split was resampled, the real collected dataset never changed |
+| 4. Self-relabel consistency | ≥ 90% | — | — | — | **NOT MEASURED** — unrelated to this fix, still requires the manual second-pass relabel I haven't done |
+| 5. Correct ≥ 90% when confidence > 0.7 | ≥ 90% | — | — | — | **NOT MEASURABLE AS-IS** — mean confidence when right dropped to 0.39–0.41 after the fix (lower than before), so still zero predictions crossing the 0.7 gate |
 
-**Did it help, and how do I know:**
-
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
-
-
+**Did it help, and how do I know:** **No.** Against the actual acceptance criteria, nothing improved: criterion 1 (overall accuracy) went from a consistent 0.667 to 0.333–0.485 — measurably worse on all three seeds — and criterion 2 (`hot_take` F1) stayed at exactly 0.000 in every seed, before and after. Macro F1 did rise (0.200 → 0.243–0.351) because the model stopped collapsing to a single label and started spreading guesses across all four (see the confusion matrices in `results_three_seeds_after.json` — `reaction` is no longer predicted 100% of the time), but that's not one of my five criteria, and it came at the direct cost of overall accuracy. The reason `hot_take` didn't move at all: I only had 12 real `hot_take` rows to begin with, and oversampling duplicated those same 12 rows up to parity with `reaction` — roughly 99 copies of the same handful of examples. That's zero new information, just memorized duplicates, so the model had nothing new to learn the label from and the real, untouched test set shows it.
 
 ---
 
@@ -394,13 +389,17 @@ From the confusion matrix: every one of the 11 non-`reaction` test posts (`progr
 
 <!-- For each criterion still missed: what you'd do, and why you stopped. -->
 
+**Criterion 1 (overall accuracy) and criterion 2 (`hot_take` F1):** Both need genuinely new real training examples, not duplicates of what I already have — or, short of collecting more data, a class-weighted loss function instead of oversampling, which penalizes minority-label mistakes more without copying rows. I stopped here and didn't pursue either because of the time I had left this unit; I'm flagging it honestly as a known limitation rather than fabricating more data to paper over it.
 
+**Criterion 4 (self-relabel consistency):** Needs me to actually sit down and relabel a sample a second time. Not done yet for the same time reason.
+
+**Criterion 5 (confidence > 0.7):** Needs the model to actually reach high confidence on the minority labels, which depends on the same fix as criteria 1 and 2 — more real data (or weighted loss) so it has something to be confident about. Can't be fixed independently of those.
 
 **The gap between what I meant my labels to capture and what the model
 learned:**
 <!-- Two sentences. Your confusion matrix is the evidence. -->
 
-
+`hot_take` was meant to capture a confident, unsupported claim about training or diet, distinct from a bare reaction — but across all six runs (three seeds before the fix, three after), the model never predicted `hot_take` even a single time, for any post, correct or not. It didn't learn a fuzzy or wrong version of that category; with only 12 real examples to learn from, it never formed any representation of it at all, and defaults away from it regardless of what's actually in front of it.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
